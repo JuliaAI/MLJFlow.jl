@@ -19,7 +19,7 @@ A `MLFlowLogger` object, containing the client, the experiment name and the
 artifact location.
 
 """
-struct MLFlowLogger <: MLJLogger
+struct MLFlowLogger
     client::MLFlow
     experiment_name::String
     artifact_location::Union{String,Nothing}

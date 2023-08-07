@@ -1,11 +1,11 @@
 module MLJFlow
 
 using MLJBase: info, name, Model,
-      Machine, MLJLogger
+    Machine
 
 using MLFlowClient: MLFlow, logparam, logmetric,
-      createrun, MLFlowRun, updaterun,
-      logartifact, getorcreateexperiment
+    createrun, MLFlowRun, updaterun,
+    logartifact, getorcreateexperiment
 
 using OrderedCollections: LittleDict
 
