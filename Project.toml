@@ -9,7 +9,7 @@ MLJBase = "a7f614a8-145f-11e9-1d2a-a57a1082229d"
 OrderedCollections = "bac558e1-5e72-5ebc-8fee-abe8a469f55d"
 
 [compat]
-MLFlowClient = "0.4.3"
+MLFlowClient = "0.4.4"
 MLJ = "0.19"
 MLJBase = "0.21.11"
 OrderedCollections = "1.1"

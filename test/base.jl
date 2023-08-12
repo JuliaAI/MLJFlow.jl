@@ -7,15 +7,16 @@
     clf = ConstantClassifier()
     clf_machine = machine(clf, X, y)
     e1 = evaluate!(clf_machine, resampling=CV(),
-        measures=[LogLoss(), Accuracy()], verbosity=1)
+        measures=[LogLoss(), Accuracy()], verbosity=1, logger=logger)
 
     @testset "log_evaluation" begin
-        run = log_evaluation(logger, e1)
-        @test typeof(run) == MLFlowRun
+        runs = searchruns(logger.client,
+            getexperiment(logger.client, logger.experiment_name))
+        @test typeof(runs[1]) == MLFlowRun
     end
 
     @testset "save" begin
-        run = save(logger, clf_machine)
+        run = MLJ.save(logger, clf_machine)
         @test typeof(run) == MLFlowRun
         @test listartifacts(logger.client, run) |> length == 1
     end

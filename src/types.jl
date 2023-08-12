@@ -6,17 +6,22 @@ A wrapper around a MLFlow client, with an experiment name and an artifact
 location. This is the type passed to the `logger` keyword argument of
 multiple methods in MLJBase.
 
-# Fields
-- `client`: an MLFlow client(see [MLFlowClient.jl](https://juliaai.github.io/MLFlowClient.jl/dev/reference/#MLFlowClient.MLFlow))
-- `experiment_name`: the name of the experiment. If not provided, a default
-experiment with the name "MLJ experiment" will be created.
-- `artifact_location`: the location of the artifact store.  If not provided,
-a default artifact location will be defined by MLFlow. For more information,
-see [MLFlow documentation](https://www.mlflow.org/docs/latest/tracking.html).
+To use this logger, you need to have a MLFlow server running. For more
+information, see [MLFlow documentation](https://www.mlflow.org/docs/latest/quickstart.html).
+If it is not running, an informative error will be thrown.
 
-# Return value
-A `MLFlowLogger` object, containing the client, the experiment name and the
-artifact location.
+Depending on the MLFlow server configuration, the `baseuri` can be a local
+server or a remote server. The `experiment_name` is used to identify the
+experiment in the MLFlow server. If the experiment does not exist, it will be
+created with the default name "MLJ experiment". The `artifact_location` is
+used to store the artifacts of the experiment. If not provided, a default
+artifact location will be defined by MLFlow. For more information, see
+[MLFlow documentation](https://www.mlflow.org/docs/latest/tracking.html).
+
+This constructor returns a `MLFlowLogger` object, containing the experiment
+name and the artifact location specified previously. Also it contains a
+`MLFlow` client, which is used to communicate with the MLFlow server. For
+more information, see [MLFlowClient.jl](https://juliaai.github.io/MLFlowClient.jl/dev/reference/#MLFlowClient.MLFlow).
 
 """
 struct MLFlowLogger
@@ -27,5 +32,9 @@ end
 function MLFlowLogger(baseuri; experiment_name="MLJ experiment",
     artifact_location=nothing)
     client = MLFlow(baseuri)
+
+    if ~healthcheck(client)
+        error("It seems that the MLFlow server is not running. For more information, see https://mlflow.org/docs/latest/quickstart.html")
+    end
     MLFlowLogger(client, experiment_name, artifact_location)
 end

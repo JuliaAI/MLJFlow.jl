@@ -1,8 +1,8 @@
-using MLJ
 using Test
-using MLFlowClient
+
+using MLJ
 using MLJFlow
+using MLFlowClient
 
 include("base.jl")
 include("types.jl")
-include("utilities.jl")
