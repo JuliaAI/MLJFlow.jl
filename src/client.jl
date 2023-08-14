@@ -1,5 +1,5 @@
 function logmodelparams(client::MLFlow, run::MLFlowRun, model::Model)
-    model_params = deep_params(model) |> flat_params |> collect
+    model_params = flat_params(model) |> collect
     for (name, value) in model_params
         logparam(client, run, name, value)
     end
