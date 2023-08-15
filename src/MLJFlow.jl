@@ -1,8 +1,8 @@
 module MLJFlow
 
 using MLJBase: info, name, Model,
-    Machine, flat_params
-using OrderedCollections: LittleDict
+    Machine
+using MLJModelInterface: flat_params
 using MLFlowClient: MLFlow, logparam, logmetric,
     createrun, MLFlowRun, updaterun,
     healthcheck, logartifact, getorcreateexperiment

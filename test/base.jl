@@ -4,9 +4,11 @@
         artifact_location="./mlj-test")
 
     X, y = make_moons(100)
-    clf = ConstantClassifier()
-    clf_machine = machine(clf, X, y)
-    e1 = evaluate!(clf_machine, resampling=CV(),
+    DecisionTreeClassifier = @load DecisionTreeClassifier pkg=DecisionTree
+
+    dtc = DecisionTreeClassifier()
+    dtc_machine = machine(dtc, X, y)
+    e1 = evaluate!(dtc_machine, resampling=CV(),
         measures=[LogLoss(), Accuracy()], verbosity=1, logger=logger)
 
     @testset "log_evaluation" begin
@@ -16,7 +18,7 @@
     end
 
     @testset "save" begin
-        run = MLJ.save(logger, clf_machine)
+        run = MLJ.save(logger, dtc_machine)
         @test typeof(run) == MLFlowRun
         @test listartifacts(logger.client, run) |> length == 1
     end
