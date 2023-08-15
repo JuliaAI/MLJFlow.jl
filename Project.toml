@@ -10,16 +10,15 @@ MLJModelInterface = "e80e1ace-859a-464e-9ed9-23947d8ae3ea"
 
 [compat]
 MLFlowClient = "0.4.4"
-MLJ = "0.19"
 MLJBase = "0.21.11"
 MLJModelInterface = "1.9.1"
 julia = "1.6"
 
 [extras]
 MLFlowClient = "64a0f543-368b-4a9a-827a-e71edb2a0b83"
-MLJ = "add582a8-e3ab-11e8-2d5e-e98b27df1bc7"
 MLJDecisionTreeInterface = "c6f25543-311c-4c74-83dc-3ea6d1015661"
+MLJModels = "d491faf4-2d78-11e9-2867-c94bc002c0b7"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["Test", "MLFlowClient", "MLJ", "MLJDecisionTreeInterface"]
+test = ["Test", "MLFlowClient", "MLJModels", "MLJDecisionTreeInterface"]

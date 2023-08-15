@@ -18,7 +18,7 @@
     end
 
     @testset "save" begin
-        run = MLJ.save(logger, dtc_machine)
+        run = MLJBase.save(logger, dtc_machine)
         @test typeof(run) == MLFlowRun
         @test listartifacts(logger.client, run) |> length == 1
     end
