@@ -8,7 +8,6 @@ multiple methods in MLJBase.
 
 To use this logger, you need to have a MLFlow server running. For more
 information, see [MLFlow documentation](https://www.mlflow.org/docs/latest/quickstart.html).
-If it is not running, an informative error will be thrown.
 
 Depending on the MLFlow server configuration, the `baseuri` can be a local
 server or a remote server. The `experiment_name` is used to identify the

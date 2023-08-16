@@ -6,9 +6,9 @@
     X, y = make_moons(100)
     DecisionTreeClassifier = @load DecisionTreeClassifier pkg=DecisionTree
 
-    dtc = DecisionTreeClassifier()
-    dtc_machine = machine(dtc, X, y)
-    e1 = evaluate!(dtc_machine, resampling=CV(),
+    pipe = Standardizer() |> DecisionTreeClassifier()
+    mach = machine(pipe, X, y)
+    e1 = evaluate!(mach, resampling=CV(),
         measures=[LogLoss(), Accuracy()], verbosity=1, logger=logger)
 
     @testset "log_evaluation" begin
@@ -17,8 +17,15 @@
         @test typeof(runs[1]) == MLFlowRun
     end
 
+    @testset "ensuring logging" begin
+        runs = searchruns(logger.client,
+            getexperiment(logger.client, logger.experiment_name))
+        @test issetequal(keys(runs[1].data.params),
+            String.([keys(MLJModelInterface.flat_params(pipe))...]))
+    end
+
     @testset "save" begin
-        run = MLJBase.save(logger, dtc_machine)
+        run = MLJBase.save(logger, mach)
         @test typeof(run) == MLFlowRun
         @test listartifacts(logger.client, run) |> length == 1
     end

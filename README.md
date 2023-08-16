@@ -28,3 +28,22 @@ The entire workload is divided into three different repositories:
 - [x] Polished compatibility with composed models
 - [ ] Polished compatibility with tuned models
 - [ ] Polished compatibility with iterative models
+
+## Example
+```julia
+# We first define a logger instance, providing the mlflow server address.
+# The experiment name and artifact location are optional.
+logger = MLFlowLogger("http://localhost:5000";
+    experiment_name="MLJFlow tests",
+    artifact_location="./mlj-test")
+
+X, y = make_moons(100) # X is a 100x2 matrix, y is a 100-element vector
+
+# Writing a normal MLJ workflow
+DecisionTreeClassifier = @load DecisionTreeClassifier pkg=DecisionTree
+dtc_machine = machine(dtc, X, y)
+
+# Passing the logger to the machine is enough to enable mlflow logging
+e1 = evaluate!(dtc_machine, resampling=CV(),
+    measures=[LogLoss(), Accuracy()], verbosity=1, logger=logger)
+```
