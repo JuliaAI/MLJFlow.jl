@@ -55,11 +55,11 @@ shell/console, run `mlflow server` to launch an mlflow service on a local server
 Refer to the [MLflow documentation](https://www.mlflow.org/docs/latest/index.html) for
 necessary background.
 
-In addition to the packages listed on the first line below, we assume
-MLJDecisionTreeClassifier is in the user's active Julia package environment.
+We assume MLJDecisionTreeClassifier is in the user's active Julia package
+environment.
 
 ```julia
-using MLJBase, MLJFlow, MLJModels
+using MLJ
 ```
 
 We first define a logger, providing the address of our running MLflow. The experiment
