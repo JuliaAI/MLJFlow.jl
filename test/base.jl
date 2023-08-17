@@ -1,4 +1,4 @@
-@testset "logging functions" begin
+@testset verbose = true "base" begin
     logger = MLFlowLogger("http://localhost:5000";
         experiment_name="MLJFlow tests",
         artifact_location="./mlj-test")
@@ -33,6 +33,10 @@
 
         loaded_mach = machine(artifacts[1].filepath)
         @test loaded_mach.model isa ProbabilisticPipeline
+    end
+
+    @testset "accesor methods" begin
+        @test MLJFlow.service(logger) isa MLFlow
     end
 
     experiment = getorcreateexperiment(logger.service, logger.experiment_name)
