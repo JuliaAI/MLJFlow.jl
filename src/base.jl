@@ -3,7 +3,12 @@ function log_evaluation(logger::MLFlowLogger, performance_evaluation)
         artifact_location=logger.artifact_location)
     model_name = name(performance_evaluation.model)
     run = createrun(logger.service, experiment;
-        run_name="$(model_name) run")
+        run_name="$(model_name) run",
+        tags=[
+            Dict("key" => "resampling", "value" => string(performance_evaluation.resampling)),
+            Dict("key" => "repeats", "value" => string(performance_evaluation.repeats)),
+        ]
+    )
 
     logmodelparams(logger.service, run, performance_evaluation.model)
     logmachinemeasures(logger.service, run, performance_evaluation.measure,
