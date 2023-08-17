@@ -108,7 +108,7 @@ To retrieve an artifact we need to use the MLFlowClient.jl API, and for that we 
 know the MLflow service that our `logger` wraps:
 
 ```julia
-	service = MLJFlow.service(logger)  # DOESN'T WORK YET!
+service = MLJFlow.service(logger)
 ```
 
 And we reconstruct our trained machine thus:
