@@ -12,14 +12,14 @@
         measures=[LogLoss(), Accuracy()], verbosity=1, logger=logger)
 
     @testset "log_evaluation" begin
-        runs = searchruns(logger.client,
-            getexperiment(logger.client, logger.experiment_name))
+        runs = searchruns(logger.service,
+            getexperiment(logger.service, logger.experiment_name))
         @test typeof(runs[1]) == MLFlowRun
     end
 
     @testset "ensuring logging" begin
-        runs = searchruns(logger.client,
-            getexperiment(logger.client, logger.experiment_name))
+        runs = searchruns(logger.service,
+            getexperiment(logger.service, logger.experiment_name))
         @test issetequal(keys(runs[1].data.params),
             String.([keys(MLJModelInterface.flat_params(pipe))...]))
     end
@@ -28,13 +28,13 @@
         run = MLJBase.save(logger, mach)
         @test typeof(run) == MLFlowRun
 
-        artifacts = listartifacts(logger.client, run)
+        artifacts = listartifacts(logger.service, run)
         @test artifacts |> length == 1
 
         loaded_mach = machine(artifacts[1].filepath)
         @test loaded_mach.model isa ProbabilisticPipeline
     end
 
-    experiment = getorcreateexperiment(logger.client, logger.experiment_name)
-    deleteexperiment(logger.client, experiment)
+    experiment = getorcreateexperiment(logger.service, logger.experiment_name)
+    deleteexperiment(logger.service, experiment)
 end

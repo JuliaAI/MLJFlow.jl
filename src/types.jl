@@ -2,7 +2,7 @@
     MLFlowLogger(baseuri; experiment_name="MLJ experiment",
         artifact_location=nothing)
 
-A wrapper around a MLFlow client, with an experiment name and an artifact
+A wrapper around a MLFlow service, with an experiment name and an artifact
 location. This is the type passed to the `logger` keyword argument of
 multiple methods in MLJBase.
 
@@ -19,21 +19,21 @@ artifact location will be defined by MLFlow. For more information, see
 
 This constructor returns a `MLFlowLogger` object, containing the experiment
 name and the artifact location specified previously. Also it contains a
-`MLFlow` client, which is used to communicate with the MLFlow server. For
+`MLFlow` service, which is used to communicate with the MLFlow server. For
 more information, see [MLFlowClient.jl](https://juliaai.github.io/MLFlowClient.jl/dev/reference/#MLFlowClient.MLFlow).
 
 """
 struct MLFlowLogger
-    client::MLFlow
+    service::MLFlow
     experiment_name::String
     artifact_location::Union{String,Nothing}
 end
 function MLFlowLogger(baseuri; experiment_name="MLJ experiment",
     artifact_location=nothing)
-    client = MLFlow(baseuri)
+    service = MLFlow(baseuri)
 
-    if ~healthcheck(client)
+    if ~healthcheck(service)
         error("It seems that the MLFlow server is not running. For more information, see https://mlflow.org/docs/latest/quickstart.html")
     end
-    MLFlowLogger(client, experiment_name, artifact_location)
+    MLFlowLogger(service, experiment_name, artifact_location)
 end

@@ -11,7 +11,7 @@ import MLJBase: save, log_evaluation
 
 include("types.jl")
 include("base.jl")
-include("client.jl")
+include("service.jl")
 
 # types.jl
 export MLFlowLogger

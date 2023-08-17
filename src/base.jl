@@ -1,15 +1,15 @@
 function log_evaluation(logger::MLFlowLogger, performance_evaluation)
-    experiment = getorcreateexperiment(logger.client, logger.experiment_name;
+    experiment = getorcreateexperiment(logger.service, logger.experiment_name;
         artifact_location=logger.artifact_location)
     model_name = name(performance_evaluation.model)
-    run = createrun(logger.client, experiment;
+    run = createrun(logger.service, experiment;
         run_name="$(model_name) run")
 
-    logmodelparams(logger.client, run, performance_evaluation.model)
-    logmachinemeasures(logger.client, run, performance_evaluation.measure,
+    logmodelparams(logger.service, run, performance_evaluation.model)
+    logmachinemeasures(logger.service, run, performance_evaluation.measure,
                         performance_evaluation.measurement)
 
-    updaterun(logger.client, run, "FINISHED")
+    updaterun(logger.service, run, "FINISHED")
 end
 
 function save(logger::MLFlowLogger, mach::Machine)
@@ -20,13 +20,13 @@ function save(logger::MLFlowLogger, mach::Machine)
     model = mach.model
     model_name = name(model)
 
-    experiment = getorcreateexperiment(logger.client, logger.experiment_name,
+    experiment = getorcreateexperiment(logger.service, logger.experiment_name,
         artifact_location=logger.artifact_location)
-    run = createrun(logger.client, experiment;
+    run = createrun(logger.service, experiment;
         run_name="$(model_name) run")
 
-    logmodelparams(logger.client, run, model)
+    logmodelparams(logger.service, run, model)
     fname = "$(model_name).jls"
-    logartifact(logger.client, run, fname, io)
-    updaterun(logger.client, run, "FINISHED")
+    logartifact(logger.service, run, fname, io)
+    updaterun(logger.service, run, "FINISHED")
 end
