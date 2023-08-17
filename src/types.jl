@@ -25,7 +25,7 @@ more information, see [MLFlowClient.jl](https://juliaai.github.io/MLFlowClient.j
 """
 struct MLFlowLogger
     service::MLFlow
-    verbosity::Integer
+    verbosity::Int
     experiment_name::String
     artifact_location::Union{String,Nothing}
 end
