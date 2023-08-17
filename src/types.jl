@@ -25,15 +25,16 @@ more information, see [MLFlowClient.jl](https://juliaai.github.io/MLFlowClient.j
 """
 struct MLFlowLogger
     service::MLFlow
+    verbosity::Integer
     experiment_name::String
     artifact_location::Union{String,Nothing}
 end
 function MLFlowLogger(baseuri; experiment_name="MLJ experiment",
-    artifact_location=nothing)
+    artifact_location=nothing, verbosity=1)
     service = MLFlow(baseuri)
 
     if ~healthcheck(service)
         error("It seems that the MLFlow server is not running. For more information, see https://mlflow.org/docs/latest/quickstart.html")
     end
-    MLFlowLogger(service, experiment_name, artifact_location)
+    MLFlowLogger(service, experiment_name, artifact_location, verbosity)
 end
