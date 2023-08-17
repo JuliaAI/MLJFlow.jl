@@ -35,10 +35,3 @@ function save(logger::MLFlowLogger, mach::Machine)
     logartifact(logger.service, run, fname, io)
     updaterun(logger.service, run, "FINISHED")
 end
-
-"""
-    service(logger::MLFlowLogger)
-
-Returns the MLFlow service of a logger.
-"""
-service(logger::MLFlowLogger) = logger.service

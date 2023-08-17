@@ -36,3 +36,10 @@ function logmachinemeasures(service::MLFlow, run::MLFlowRun, measures,
         logmetric(service, run, name, value)
     end
 end
+
+"""
+    service(logger::MLFlowLogger)
+
+Returns the MLFlow service of a logger.
+"""
+service(logger::MLFlowLogger) = logger.service
