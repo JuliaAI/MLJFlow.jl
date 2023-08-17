@@ -27,7 +27,12 @@
     @testset "save" begin
         run = MLJBase.save(logger, mach)
         @test typeof(run) == MLFlowRun
-        @test listartifacts(logger.client, run) |> length == 1
+
+        artifacts = listartifacts(logger.client, run)
+        @test artifacts |> length == 1
+
+        loaded_mach = machine(artifacts[1].filepath)
+        @test loaded_mach.model isa ProbabilisticPipeline
     end
 
     experiment = getorcreateexperiment(logger.client, logger.experiment_name)
