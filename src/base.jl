@@ -1,12 +1,11 @@
 function log_evaluation(logger::MLFlowLogger, performance_evaluation)
     experiment = getorcreateexperiment(logger.service, logger.experiment_name;
         artifact_location=logger.artifact_location)
-    model_name = name(performance_evaluation.model)
     run = createrun(logger.service, experiment;
-        run_name="$(model_name) run",
         tags=[
             Dict("key" => "resampling", "value" => string(performance_evaluation.resampling)),
             Dict("key" => "repeats", "value" => string(performance_evaluation.repeats)),
+            Dict("key" => "model type", "value" => name(performance_evaluation.model)),
         ]
     )
 
@@ -23,15 +22,12 @@ function save(logger::MLFlowLogger, mach::Machine)
     seekstart(io)
 
     model = mach.model
-    model_name = name(model)
 
     experiment = getorcreateexperiment(logger.service, logger.experiment_name,
         artifact_location=logger.artifact_location)
-    run = createrun(logger.service, experiment;
-        run_name="$(model_name) run")
+    run = createrun(logger.service, experiment)
 
     logmodelparams(logger.service, run, model)
-    fname = "$(model_name).jls"
-    logartifact(logger.service, run, fname, io)
+    logartifact(logger.service, run, "machine.jls", io)
     updaterun(logger.service, run, "FINISHED")
 end
