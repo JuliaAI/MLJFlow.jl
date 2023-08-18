@@ -1,7 +1,7 @@
 @testset verbose = true "base" begin
     logger = MLFlowLogger("http://localhost:5000";
         experiment_name="MLJFlow tests",
-        artifact_location="./mlj-test")
+        artifact_location="/tmp/mlj-test")
 
     X, y = make_moons(100)
     DecisionTreeClassifier = @load DecisionTreeClassifier pkg=DecisionTree
