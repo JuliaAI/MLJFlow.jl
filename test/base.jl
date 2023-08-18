@@ -33,6 +33,12 @@
 
         loaded_mach = machine(artifacts[1].filepath)
         @test loaded_mach.model isa ProbabilisticPipeline
+
+        test_x, test_y = make_moons(1)
+        pred = predict(mach, test_x)[1]
+        loaded_mach_pred = predict(loaded_mach, test_x)[1]
+        @test pdf(pred, 0) == pdf(loaded_mach_pred, 0)
+        @test pdf(pred, 1) == pdf(loaded_mach_pred, 1)
     end
 
     @testset "accesor methods" begin
