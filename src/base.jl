@@ -23,7 +23,7 @@ function save(logger::MLFlowLogger, mach::Machine)
 
     model = mach.model
 
-    experiment = getorcreateexperiment(logger.service, logger.experiment_name,
+    experiment = getorcreateexperiment(logger.service, logger.experiment_name;
         artifact_location=logger.artifact_location)
     run = createrun(logger.service, experiment)
 
