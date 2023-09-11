@@ -1,34 +1,34 @@
 @testset verbose = true "base" begin
-    logger = MLFlowLogger("http://localhost:5000";
-        experiment_name="MLJFlow tests",
-        artifact_location="/tmp/mlj-test")
-
-    X, y = make_moons(100)
-    DecisionTreeClassifier = @load DecisionTreeClassifier pkg=DecisionTree
-
-    pipe = Standardizer() |> DecisionTreeClassifier()
+    model = DecisionTreeClassifier()
+    pipe = Standardizer() |> model
     mach = machine(pipe, X, y)
     e1 = evaluate!(mach, resampling=CV(),
-        measures=[LogLoss(), Accuracy()], verbosity=1, logger=logger)
+        measures=[LogLoss(), Accuracy()], verbosity=1, logger=LOGGER)
+
+    service = MLJFlow.service(LOGGER)
+
+    @testset "accesor methods" begin
+        @test service isa MLFlow
+    end
 
     @testset "log_evaluation" begin
-        runs = searchruns(logger.service,
-            getexperiment(logger.service, logger.experiment_name))
+        runs = searchruns(service, getexperiment(service,
+            LOGGER.experiment_name))
         @test typeof(runs[1]) == MLFlowRun
     end
 
     @testset "ensuring logging" begin
-        runs = searchruns(logger.service,
-            getexperiment(logger.service, logger.experiment_name))
+        runs = searchruns(service, getexperiment(service,
+            LOGGER.experiment_name))
         @test issetequal(keys(runs[1].data.params),
             String.([keys(MLJModelInterface.flat_params(pipe))...]))
     end
 
     @testset "save" begin
-        run = MLJBase.save(logger, mach)
+        run = MLJBase.save(LOGGER, mach)
         @test typeof(run) == MLFlowRun
 
-        artifacts = listartifacts(logger.service, run)
+        artifacts = listartifacts(service, run)
         @test artifacts |> length == 1
 
         loaded_mach = machine(artifacts[1].filepath)
@@ -41,10 +41,6 @@
         @test pdf(pred, 1) == pdf(loaded_mach_pred, 1)
     end
 
-    @testset "accesor methods" begin
-        @test MLJFlow.service(logger) isa MLFlow
-    end
-
-    experiment = getorcreateexperiment(logger.service, logger.experiment_name)
-    deleteexperiment(logger.service, experiment)
+    experiment = getorcreateexperiment(service, LOGGER.experiment_name)
+    deleteexperiment(service, experiment)
 end
