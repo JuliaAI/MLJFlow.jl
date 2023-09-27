@@ -1,4 +1,4 @@
-# MLJFlow
+# MLJFlow.jl
 
 | Branch | Build | Coverage |
 | :---: | :---: | :---: |
