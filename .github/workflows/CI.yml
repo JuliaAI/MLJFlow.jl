@@ -31,7 +31,7 @@ jobs:
           python-version: '3.10'
       - name: Setup mlflow locally
         run: |
-          pip install mlflow
+          pip install mlflow==2.6.0
           python3 /opt/hostedtoolcache/Python/3.10.12/x64/bin/mlflow server --host 0.0.0.0 --port 5000 &
           sleep 5
       - uses: julia-actions/setup-julia@v1
