@@ -1,4 +1,4 @@
-# MLJFlow
+# MLJFlow.jl
 
 | Branch | Build | Coverage |
 | :---: | :---: | :---: |
@@ -64,7 +64,7 @@ We assume MLJDecisionTreeClassifier is in the user's active Julia package
 environment.
 
 ```julia
-using MLJ
+using MLJ # Requires MLJ.jl version 0.19.3 or higher
 ```
 
 We first define a logger, providing the address of our running MLflow. The experiment
