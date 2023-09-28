@@ -11,11 +11,6 @@ on:
     tags: '*'
 jobs:
   test:
-    services:
-      mlflow:
-        image: adacotechjp/mlflow:2.3.1
-        ports:
-          - 5000:5000
     name: Julia ${{ matrix.version }} - ${{ matrix.os }} - ${{ matrix.arch }} - ${{ github.event_name }}
     runs-on: ${{ matrix.os }}
     strategy:
@@ -31,6 +26,15 @@ jobs:
           - x64
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10.13'
+      - name: Setup mlflow locally
+        run: |
+          pip install mlflow
+          pip show mlflow 
+          python3 /opt/hostedtoolcache/Python/3.10.13/x64/bin/mlflow server --host 0.0.0.0 --port 5000 &
+          sleep 5
       - uses: julia-actions/setup-julia@v1
         with:
           version: ${{ matrix.version }}
@@ -51,3 +55,4 @@ jobs:
       - uses: codecov/codecov-action@v2
         with:
           files: lcov.info
+
