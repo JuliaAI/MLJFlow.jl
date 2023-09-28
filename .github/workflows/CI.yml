@@ -11,13 +11,6 @@ on:
     tags: '*'
 jobs:
   test:
-    services:
-      mlflow:
-        image: adacotechjp/mlflow:2.3.1
-        ports:
-          - 5000:5000
-    run: |
-        sleep 5
     name: Julia ${{ matrix.version }} - ${{ matrix.os }} - ${{ matrix.arch }} - ${{ github.event_name }}
     runs-on: ${{ matrix.os }}
     strategy:
