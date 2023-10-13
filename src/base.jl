@@ -1,4 +1,4 @@
-function log_evaluation(logger::MLFlowLogger, performance_evaluation)
+function log_evaluation(logger, performance_evaluation)
     experiment = getorcreateexperiment(logger.service, logger.experiment_name;
         artifact_location=logger.artifact_location)
     run = createrun(logger.service, experiment;
@@ -19,12 +19,12 @@ function log_evaluation(logger::MLFlowLogger, performance_evaluation)
     updaterun(logger.service, run, "FINISHED")
 end
 
-function save(logger::MLFlowLogger, mach::Machine)
+function save(logger, machine:: Machine)
     io = IOBuffer()
-    save(io, mach)
+    save(io, machine)
     seekstart(io)
 
-    model = mach.model
+    model = machine.model
 
     experiment = getorcreateexperiment(logger.service, logger.experiment_name;
         artifact_location=logger.artifact_location)

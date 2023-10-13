@@ -12,7 +12,4 @@ include("types.jl")
 include("base.jl")
 include("service.jl")
 
-# types.jl
-export MLFlowLogger
-
 end
