@@ -11,7 +11,7 @@ MLJModelInterface = "e80e1ace-859a-464e-9ed9-23947d8ae3ea"
 [compat]
 MLFlowClient = "0.4.4"
 MLJBase = "1.0.1"
-MLJModelInterface = "1.9.2"
+MLJModelInterface = "1.9.3"
 julia = "1.6"
 
 [extras]
