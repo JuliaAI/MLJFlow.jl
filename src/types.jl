@@ -34,7 +34,8 @@ function Logger(baseuri; experiment_name="MLJ experiment",
     service = MLFlow(baseuri)
 
     if ~healthcheck(service)
-        error("It seems that the MLFlow server is not running. For more information, see https://mlflow.org/docs/latest/quickstart.html")
+        error("It seems that the MLFlow server is not running at specified "*
+        "location, $baseuri. For more information, see https://mlflow.org/docs/latest/quickstart.html")
     end
     Logger(service, verbosity, experiment_name, artifact_location)
 end

@@ -1,5 +1,5 @@
 @testset "types" begin
-    logger = MLJFlow.Logger("http://localhost:5000")
+    logger = MLJFlow.Logger(ENV["MLFLOW_URI"])
 
     @test typeof(logger) == MLJFlow.Logger
     @test typeof(logger.service) == MLFlow
