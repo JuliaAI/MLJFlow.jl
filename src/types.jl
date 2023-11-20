@@ -1,5 +1,5 @@
 """
-    MLFlowLogger(baseuri; experiment_name="MLJ experiment",
+    Logger(baseuri; experiment_name="MLJ experiment",
         artifact_location=nothing)
 
 A wrapper around a MLFlow service, with an experiment name and an artifact
@@ -17,24 +17,25 @@ used to store the artifacts of the experiment. If not provided, a default
 artifact location will be defined by MLFlow. For more information, see
 [MLFlow documentation](https://www.mlflow.org/docs/latest/tracking.html).
 
-This constructor returns a `MLFlowLogger` object, containing the experiment
+This constructor returns a `Logger` object, containing the experiment
 name and the artifact location specified previously. Also it contains a
 `MLFlow` service, which is used to communicate with the MLFlow server. For
 more information, see [MLFlowClient.jl](https://juliaai.github.io/MLFlowClient.jl/dev/reference/#MLFlowClient.MLFlow).
 
 """
-struct MLFlowLogger
+struct Logger
     service::MLFlow
     verbosity::Int
     experiment_name::String
     artifact_location::Union{String,Nothing}
 end
-function MLFlowLogger(baseuri; experiment_name="MLJ experiment",
+function Logger(baseuri; experiment_name="MLJ experiment",
     artifact_location=nothing, verbosity=1)
     service = MLFlow(baseuri)
 
     if ~healthcheck(service)
-        error("It seems that the MLFlow server is not running. For more information, see https://mlflow.org/docs/latest/quickstart.html")
+        error("It seems that the MLFlow server is not running at specified "*
+        "location, $baseuri. For more information, see https://mlflow.org/docs/latest/quickstart.html")
     end
-    MLFlowLogger(service, verbosity, experiment_name, artifact_location)
+    Logger(service, verbosity, experiment_name, artifact_location)
 end

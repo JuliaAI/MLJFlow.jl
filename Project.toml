@@ -1,7 +1,7 @@
 name = "MLJFlow"
 uuid = "7b7b8358-b45c-48ea-a8ef-7ca328ad328f"
 authors = ["Jose Esparza <joseesparzadc@icloud.com>"]
-version = "0.2.0"
+version = "0.3.0"
 
 [deps]
 MLFlowClient = "64a0f543-368b-4a9a-827a-e71edb2a0b83"
@@ -10,8 +10,8 @@ MLJModelInterface = "e80e1ace-859a-464e-9ed9-23947d8ae3ea"
 
 [compat]
 MLFlowClient = "0.4.4"
-MLJBase = "1"
-MLJModelInterface = "1.9.1"
+MLJBase = "1.0.1"
+MLJModelInterface = "1.9.3"
 julia = "1.6"
 
 [extras]

@@ -30,7 +30,7 @@ The entire workload is divided into three different repositories:
 - [x] MLflow cycle automation (create experiment, create run, log metrics, log parameters,
       log artifacts, etc.)
 
-- [x] Provides a wrapper `MLFlowLogger` for MLFlowClient.jl clients and associated
+- [x] Provides a wrapper `Logger` for MLFlowClient.jl clients and associated
       metadata; instances of this type are valid "loggers", which can be passed to MLJ
       functions supporting the `logger` keyword argument.
 	  
@@ -71,7 +71,7 @@ We first define a logger, providing the address of our running MLflow. The exper
 name and artifact location are optional.
 
 ```julia
-logger = MLFlowLogger(
+logger = MLJFlow.Logger(
     "http://127.0.0.1:5000";
     experiment_name="MLJFlow test",
     artifact_location="./mlj-test"

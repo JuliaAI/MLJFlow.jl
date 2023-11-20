@@ -75,8 +75,8 @@ function logmachinemeasures(service::MLFlow, run::MLFlowRun, measures,
 end
 
 """
-    service(logger::MLFlowLogger)
+    service(logger)
 
 Returns the MLFlow service of a logger.
 """
-service(logger::MLFlowLogger) = logger.service
+service(logger) = logger.service
