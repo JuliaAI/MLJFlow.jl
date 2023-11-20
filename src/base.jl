@@ -1,4 +1,4 @@
-function log_evaluation(logger, performance_evaluation)
+function log_evaluation(logger::Logger, performance_evaluation)
     experiment = getorcreateexperiment(logger.service, logger.experiment_name;
         artifact_location=logger.artifact_location)
     run = createrun(logger.service, experiment;
