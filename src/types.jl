@@ -39,3 +39,11 @@ function Logger(baseuri; experiment_name="MLJ experiment",
     end
     Logger(service, verbosity, experiment_name, artifact_location)
 end
+function show(io::IO, logger::MLJFlow.Logger)
+    print(io,
+        "MLFLowLogger(\"$(logger.service.baseuri)\",\n" *
+        "   experiment_name=\"$(logger.experiment_name)\",\n" *
+        "   artifact_location=\"$(logger.artifact_location)\",\n" *
+        ") using MLFlow API version $(logger.service.apiversion)"
+    )
+end
