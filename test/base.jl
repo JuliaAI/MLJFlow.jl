@@ -45,6 +45,16 @@
         @test MLJFlow.service(logger) isa MLFlow
     end
 
+    @testset "log_evaluation_with_zero_param_model" begin
+        zeroparams_machine = machine(ConstantClassifier(), X, y)
+
+        e1 = evaluate!(zeroparams_machine, resampling=CV(),
+            measures=[LogLoss(), Accuracy()], verbosity=1, logger=logger)
+        runs = searchruns(logger.service,
+            getexperiment(logger.service, logger.experiment_name))
+        @test isempty(runs[3].data.params)
+    end
+
     experiment = getorcreateexperiment(logger.service, logger.experiment_name)
     deleteexperiment(logger.service, experiment)
 end
