@@ -6,6 +6,7 @@ using MLFlowClient: MLFlow, logparam, logmetric,
     createrun, MLFlowRun, updaterun,
     healthcheck, logartifact, getorcreateexperiment
 
+import Base: show
 import MLJBase: save, log_evaluation
 
 include("types.jl")
