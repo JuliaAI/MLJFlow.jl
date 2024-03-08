@@ -19,7 +19,7 @@ function log_evaluation(logger::Logger, performance_evaluation)
     updaterun(logger.service, run, "FINISHED")
 end
 
-function save(logger, machine:: Machine)
+function save(logger::Logger, machine:: Machine)
     io = IOBuffer()
     save(io, machine)
     seekstart(io)
