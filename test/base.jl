@@ -1,5 +1,5 @@
 @testset verbose = true "base" begin
-    logger = MLJFlow.Logger(ENV["MLFLOW_URI"];
+    logger = MLJFlow.Logger(ENV["MLFLOW_TRACKING_URI"];
         experiment_name="MLJFlow tests",
         artifact_location="/tmp/mlj-test")
 

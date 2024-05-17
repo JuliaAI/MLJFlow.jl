@@ -1,5 +1,5 @@
 """
-    Logger(baseuri; experiment_name="MLJ experiment",
+    Logger(apiroot; experiment_name="MLJ experiment",
         artifact_location=nothing)
 
 A wrapper around a MLFlow service, with an experiment name and an artifact
@@ -9,8 +9,8 @@ multiple methods in MLJBase.
 To use this logger, you need to have a MLFlow server running. For more
 information, see [MLFlow documentation](https://www.mlflow.org/docs/latest/quickstart.html).
 
-Depending on the MLFlow server configuration, the `baseuri` can be a local
-server or a remote server. The `experiment_name` is used to identify the
+Depending on the MLFlow server configuration, the `apiroot` can be a local
+or a remote server API. The `experiment_name` is used to identify the
 experiment in the MLFlow server. If the experiment does not exist, it will be
 created with the default name "MLJ experiment". The `artifact_location` is
 used to store the artifacts of the experiment. If not provided, a default
@@ -29,15 +29,15 @@ struct Logger
     experiment_name::String
     artifact_location::Union{String,Nothing}
 end
-function Logger(baseuri; experiment_name="MLJ experiment",
+function Logger(apiroot; experiment_name="MLJ experiment",
     artifact_location=nothing, verbosity=1)
-    service = MLFlow(baseuri)
+    service = MLFlow(apiroot)
 
     Logger(service, verbosity, experiment_name, artifact_location)
 end
 function show(io::IO, logger::MLJFlow.Logger)
     print(io,
-        "MLFLowLogger(\"$(logger.service.baseuri)\",\n" *
+        "MLFLowLogger(\"$(logger.service.apiroot)\",\n" *
         "   experiment_name=\"$(logger.experiment_name)\",\n" *
         "   artifact_location=\"$(logger.artifact_location)\",\n" *
         ") using MLFlow API version $(logger.service.apiversion)"
