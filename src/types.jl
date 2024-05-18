@@ -32,6 +32,7 @@ end
 function Logger(apiroot; experiment_name="MLJ experiment",
     artifact_location=nothing, verbosity=1)
     service = MLFlow(apiroot)
+    @async process_queue()
 
     Logger(service, verbosity, experiment_name, artifact_location)
 end

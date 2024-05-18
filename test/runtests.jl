@@ -1,9 +1,11 @@
 using Test
+using .Threads
 
 using MLJFlow
 
 using MLJBase
 using MLJModels
+using MLJTuning
 using MLFlowClient
 using MLJModelInterface
 using StatisticalMeasures
@@ -21,4 +23,4 @@ end
 include("base.jl")
 include("types.jl")
 include("service.jl")
-
+include("multiprocessing.jl")

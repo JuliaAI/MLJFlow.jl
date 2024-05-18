@@ -1,4 +1,12 @@
-function log_evaluation(logger::Logger, performance_evaluation)
+const TASK_QUEUE = Channel{Tuple}()
+
+function process_queue()
+    for (f, l, p) in TASK_QUEUE
+        f(l, p)
+    end
+end
+
+function _log_evaluation(logger::Logger, performance_evaluation)
     experiment = getorcreateexperiment(logger.service, logger.experiment_name;
         artifact_location=logger.artifact_location)
     run = createrun(logger.service, experiment;
@@ -17,6 +25,11 @@ function log_evaluation(logger::Logger, performance_evaluation)
                         performance_evaluation.measurement)
 
     updaterun(logger.service, run, "FINISHED")
+end
+
+
+function log_evaluation(logger::Logger, performance_evaluation)
+    @sync put!(TASK_QUEUE, (_log_evaluation, logger, performance_evaluation))
 end
 
 function save(logger::Logger, machine:: Machine)

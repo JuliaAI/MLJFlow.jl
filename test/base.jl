@@ -12,8 +12,8 @@
         measures=[LogLoss(), Accuracy()], verbosity=1, logger=logger)
 
     @testset "log_evaluation" begin
-        runs = searchruns(logger.service,
-            getexperiment(logger.service, logger.experiment_name))
+        experiment = getexperiment(logger.service, logger.experiment_name)
+        runs = searchruns(logger.service, experiment)
         @test typeof(runs[1]) == MLFlowRun
     end
 
