@@ -1,10 +1,4 @@
-const TASK_QUEUE = Channel{Tuple}()
-
-function process_queue()
-    for (f, l, p) in TASK_QUEUE
-        f(l, p)
-    end
-end
+const LOGGING_TASKS_CHANNEL = Channel{Tuple}()
 
 function _log_evaluation(logger::Logger, performance_evaluation)
     experiment = getorcreateexperiment(logger.service, logger.experiment_name;
@@ -29,7 +23,12 @@ end
 
 
 function log_evaluation(logger::Logger, performance_evaluation)
-    @sync put!(TASK_QUEUE, (_log_evaluation, logger, performance_evaluation))
+    result_channel = Channel{MLFlowRun}(1)
+
+    put!(LOGGING_TASKS_CHANNEL, (_log_evaluation, logger, performance_evaluation, result_channel))
+    wait(result_channel)
+
+    return take!(result_channel)
 end
 
 function save(logger::Logger, machine:: Machine)
