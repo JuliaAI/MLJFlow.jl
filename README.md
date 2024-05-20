@@ -67,12 +67,12 @@ environment.
 using MLJ # Requires MLJ.jl version 0.19.3 or higher
 ```
 
-We first define a logger, providing the address of our running MLflow. The experiment
-name and artifact location are optional.
+We first define a logger, providing the API address of our running MLflow
+instance. The experiment name and artifact location are optional.
 
 ```julia
 logger = MLJFlow.Logger(
-    "http://127.0.0.1:5000";
+    "http://127.0.0.1:5000/api";
     experiment_name="MLJFlow test",
     artifact_location="./mlj-test"
 )
