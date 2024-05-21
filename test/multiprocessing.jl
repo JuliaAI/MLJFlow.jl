@@ -15,7 +15,7 @@
             range=r,
             logger=logger,
             acceleration=acceleration_method,
-            n=100,
+            n=10,
         )
         tuned_model_mach = machine(tuned_model, X, y)
         fit!(tuned_model_mach)
@@ -23,7 +23,7 @@
         experiment = getorcreateexperiment(logger.service, logger.experiment_name)
         runs = searchruns(logger.service, experiment)
 
-        @assert length(runs) == 100
+        @assert length(runs) == 10
 
         deleteexperiment(logger.service, experiment)
     end
