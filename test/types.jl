@@ -11,4 +11,9 @@
         "   artifact_location=\"$(logger.artifact_location)\",\n" *
         ") using MLFlow API version $(logger.service.apiversion)"
     @test String(take!(io)) == test_string
+
+    MLJFlow.close(logger)
+    @test ~(Base.isopen(logger._logging_channel))
+    logger._logging_channel = MLJFlow.open_logging_channel()
+    @test Base.isopen(logger._logging_channel)
 end

@@ -23,7 +23,7 @@ name and the artifact location specified previously. Also it contains a
 more information, see [MLFlowClient.jl](https://juliaai.github.io/MLFlowClient.jl/dev/reference/#MLFlowClient.MLFlow).
 
 """
-struct Logger
+mutable struct Logger
     service::MLFlow
     verbosity::Int
     experiment_name::String
@@ -56,7 +56,7 @@ operations from the `_logging_channel`. This function closes the channel
 to stop the background loop.
 """
 function close(logger::Logger)
-    close(logger._logging_channel)
+    Base.close(logger._logging_channel)
 end
 
 """
