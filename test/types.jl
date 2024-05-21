@@ -13,7 +13,7 @@
     @test String(take!(io)) == test_string
 
     MLJFlow.close(logger)
-    @test ~(Base.isopen(logger._logging_channel))
-    logger._logging_channel = MLJFlow.open_logging_channel()
-    @test Base.isopen(logger._logging_channel)
+    @test ~(Base.isopen(logger.logging_channel))
+    MLJFlow.open_logging_channel(logger)
+    @test Base.isopen(logger.logging_channel)
 end

@@ -1,4 +1,4 @@
-function _log_evaluation(logger::Logger, performance_evaluation)
+function log_evaluation_task(logger::Logger, performance_evaluation)
     experiment = getorcreateexperiment(logger.service, logger.experiment_name;
         artifact_location=logger.artifact_location)
     run = createrun(logger.service, experiment;
@@ -7,8 +7,14 @@ function _log_evaluation(logger::Logger, performance_evaluation)
                 "key" => "resampling",
                 "value" => string(performance_evaluation.resampling)
             ),
-            Dict("key" => "repeats", "value" => string(performance_evaluation.repeats)),
-            Dict("key" => "model type", "value" => name(performance_evaluation.model)),
+            Dict(
+                "key" => "repeats",
+                "value" => string(performance_evaluation.repeats)
+            ),
+            Dict(
+                "key" => "model type",
+                "value" => name(performance_evaluation.model)
+            ),
         ]
     )
 
@@ -22,8 +28,8 @@ end
 function log_evaluation(logger::Logger, performance_evaluation)
     result_channel = Channel{MLFlowRun}(1)
 
-    put!(logger._logging_channel, (_log_evaluation, logger, performance_evaluation, result_channel))
-    wait(result_channel)
+    put!(logger.logging_channel, (log_evaluation_task, logger,
+        performance_evaluation, result_channel))
 
     return take!(result_channel)
 end
