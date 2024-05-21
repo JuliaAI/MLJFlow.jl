@@ -28,15 +28,15 @@ struct Logger
     verbosity::Int
     experiment_name::String
     artifact_location::Union{String,Nothing}
-    _LOGGING_CHANNEL::Channel{Tuple}
+    _logging_channel::Channel{Tuple}
 end
 
 function Logger(apiroot; experiment_name="MLJ experiment",
     artifact_location=nothing, verbosity=1)
     service = MLFlow(apiroot)
-    LOGGING_CHANNEL = open_logging_channel()
+    logging_channel = open_logging_channel()
 
-    Logger(service, verbosity, experiment_name, artifact_location, LOGGING_CHANNEL)
+    Logger(service, verbosity, experiment_name, artifact_location, logging_channel)
 end
 
 function show(io::IO, logger::MLJFlow.Logger)
@@ -52,34 +52,34 @@ end
     close(logger::Logger)
 
 Each logger instance has a background loop that allows to execute the logging
-operations from the `_LOGGING_TASKS_CHANNEL`. This function closes the channel
+operations from the `_logging_channel`. This function closes the channel
 to stop the background loop.
 """
 function close(logger::Logger)
-    close(logger._LOGGING_CHANNEL)
+    close(logger._logging_channel)
 end
 
 """
     open_logging_channel(logger::Logger)
 
 To allow safe concurrent logging operations, this function opens the
-`_LOGGING_TASKS_CHANNEL` of the logger and starts a background worker.
+`_logging_channel` of the logger and starts a background worker.
 """
 function open_logging_channel()
-    LOGGING_CHANNEL = Channel{Tuple}()
+    logging_channel = Channel{Tuple}()
 
     # NOTE: This background loop allows to execute the logging operations from
-    # the LOGGING_TASKS_CHANNEL. The execution result is sent back to the
+    # the logging_channel. The execution result is sent back to the
     # requesting thread through the result_channel.
     # Until May 2024, mlflow does not support concurrent experiment creation,
     # which does not allow to run the logging operations in multi-threading and
     # multi-processing.
     #
     # Its usage can be seen in the `log_evaluation` function in `base.jl`.
-    Threads.@spawn for (logging_function, logger, performance_evaluation, result_channel) in LOGGING_CHANNEL
+    Threads.@spawn for (logging_function, logger, performance_evaluation, result_channel) in logging_channel
         result = logging_function(logger, performance_evaluation)
         put!(result_channel, result)
     end
 
-    return LOGGING_CHANNEL
+    return logging_channel
 end

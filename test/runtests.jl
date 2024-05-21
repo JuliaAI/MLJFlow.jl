@@ -1,5 +1,4 @@
 using Test
-using .Threads
 
 using MLJFlow
 
