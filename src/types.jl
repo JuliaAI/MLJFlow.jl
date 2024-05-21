@@ -28,7 +28,9 @@ struct Logger
     verbosity::Int
     experiment_name::String
     artifact_location::Union{String,Nothing}
+    _LOGGING_TASKS_CHANNEL::Channel{Tuple}
 end
+
 function Logger(apiroot; experiment_name="MLJ experiment",
     artifact_location=nothing, verbosity=1)
     service = MLFlow(apiroot)
@@ -41,15 +43,18 @@ function Logger(apiroot; experiment_name="MLJ experiment",
     # multi-processing.
     #
     # Its usage can be seen in the `log_evaluation` function in `base.jl`.
+    _LOGGING_TASKS_CHANNEL = Channel{Tuple}()
+
     Threads.@spawn begin
-        for (logging_function, logger, performance_evaluation, result_channel) in LOGGING_TASKS_CHANNEL
+        for (logging_function, logger, performance_evaluation, result_channel) in _LOGGING_TASKS_CHANNEL
             result = logging_function(logger, performance_evaluation)
             put!(result_channel, result)
         end
     end
 
-    Logger(service, verbosity, experiment_name, artifact_location)
+    Logger(service, verbosity, experiment_name, artifact_location, _LOGGING_TASKS_CHANNEL)
 end
+
 function show(io::IO, logger::MLJFlow.Logger)
     print(io,
         "MLFLowLogger(\"$(logger.service.apiroot)\",\n" *

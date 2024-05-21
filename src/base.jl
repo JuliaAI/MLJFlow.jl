@@ -1,5 +1,3 @@
-const LOGGING_TASKS_CHANNEL = Channel{Tuple}()
-
 function _log_evaluation(logger::Logger, performance_evaluation)
     experiment = getorcreateexperiment(logger.service, logger.experiment_name;
         artifact_location=logger.artifact_location)
@@ -21,11 +19,10 @@ function _log_evaluation(logger::Logger, performance_evaluation)
     updaterun(logger.service, run, "FINISHED")
 end
 
-
 function log_evaluation(logger::Logger, performance_evaluation)
     result_channel = Channel{MLFlowRun}(1)
 
-    put!(LOGGING_TASKS_CHANNEL, (_log_evaluation, logger, performance_evaluation, result_channel))
+    put!(logger._LOGGING_TASKS_CHANNEL, (_log_evaluation, logger, performance_evaluation, result_channel))
     wait(result_channel)
 
     return take!(result_channel)
