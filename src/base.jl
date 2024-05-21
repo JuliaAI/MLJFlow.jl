@@ -22,7 +22,7 @@ end
 function log_evaluation(logger::Logger, performance_evaluation)
     result_channel = Channel{MLFlowRun}(1)
 
-    put!(logger._LOGGING_TASKS_CHANNEL, (_log_evaluation, logger, performance_evaluation, result_channel))
+    put!(logger._LOGGING_CHANNEL, (_log_evaluation, logger, performance_evaluation, result_channel))
     wait(result_channel)
 
     return take!(result_channel)
