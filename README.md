@@ -121,7 +121,7 @@ And we reconstruct our trained machine thus:
 ```julia
 using MLFlowClient
 artifacts = MLFlowClient.listartifacts(service, run)
-mach2 = machine(artifact[1].filepath)
+mach2 = machine(artifacts[1].filepath)
 ```
 
 We can predict using the deserialized machine:
