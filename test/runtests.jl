@@ -5,6 +5,7 @@ using MLJFlow
 using MLJBase
 using MLJModels
 using MLJTuning
+using MLJTransforms
 using MLFlowClient
 using MLJModelInterface
 using StatisticalMeasures
