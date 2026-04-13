@@ -31,7 +31,7 @@ jobs:
         run: |
           touch ./requirements.txt
           echo "mlflow==2.13.0" > ./requirements.txt
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.10.13'
           cache: 'pip'
