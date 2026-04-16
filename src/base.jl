@@ -28,6 +28,17 @@ function log_evaluation(logger::Logger, performance_evaluation)
     return result
 end
 
+"""
+    artifact_proxy_path(artifact_uri)
+
+**Private method.**
+
+Strips the scheme prefix from an MLflow artifact URI to produce a path
+suitable for the mlflow-artifacts proxy.
+"""
+artifact_proxy_path(artifact_uri::String) =
+    replace(artifact_uri, r"^[a-z\-]+:/*" => "")
+
 function save(logger::Logger, machine:: Machine)
     io = IOBuffer()
     save(io, machine)
@@ -41,11 +52,28 @@ function save(logger::Logger, machine:: Machine)
 
     logmodelparams(logger.service, run, model)
 
-    # Upload artifact via the mlflow-artifacts proxy.
-    # Strip the scheme prefix from artifact_uri to get the proxy-relative path.
-    artifact_path = replace(run.info.artifact_uri, r"^[a-z\-]+:/*" => "")
-    uploadartifact(logger.service, "$artifact_path/machine.jls", take!(io))
+    proxy_path = artifact_proxy_path(run.info.artifact_uri)
+    uploadartifact(logger.service, "$proxy_path/machine.jls", take!(io))
 
     updaterun(logger.service, run; status=RunStatus.FINISHED, run_name=missing)
     return run
+end
+
+"""
+    load(logger::Logger, run::Run)
+
+Downloads the serialized machine artifact from the given MLflow `run` and
+returns the deserialized `Machine`.
+"""
+function load(logger::Logger, run::Run)
+    proxy_path = artifact_proxy_path(run.info.artifact_uri)
+    data = downloadartifact(logger.service, "$proxy_path/machine.jls")
+
+    tmpfile = tempname() * ".jls"
+    try
+        write(tmpfile, data)
+        return machine(tmpfile)
+    finally
+        rm(tmpfile; force=true)
+    end
 end

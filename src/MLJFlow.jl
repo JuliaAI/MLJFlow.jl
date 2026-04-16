@@ -1,6 +1,6 @@
 module MLJFlow
 
-using MLJBase: Model, Machine, name
+using MLJBase: Model, Machine, machine, name
 using MLJModelInterface: flat_params
 using MLFlowClient: MLFlow, logparam, logmetric, createrun, Run,
     updaterun, uploadartifact, downloadartifact, getexperiment,

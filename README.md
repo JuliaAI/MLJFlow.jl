@@ -135,22 +135,13 @@ mach = machine(model, X, y) |> fit!
 run = MLJ.save(logger, mach)
 ```
 
-Notice that in this case `MLJBase.save` returns a run (an instance of `MLFlowRun` from
+Notice that in this case `MLJBase.save` returns a run (an instance of `Run` from
 MLFlowClient.jl).
 
-To retrieve an artifact we need to use the MLFlowClient.jl API, and for that we need to
-know the MLflow service that our `logger` wraps:
+To retrieve the saved machine:
 
 ```julia
-service = MLJFlow.service(logger)
-```
-
-And we reconstruct our trained machine thus:
-
-```julia
-using MLFlowClient
-artifacts = MLFlowClient.listartifacts(service, run)
-mach2 = machine(artifacts[1].filepath)
+mach2 = MLJFlow.load(logger, run)
 ```
 
 We can predict using the deserialized machine:

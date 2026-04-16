@@ -30,20 +30,7 @@
         run = MLJBase.save(logger, mach)
         @test typeof(run) == Run
 
-        # Download the artifact and load the machine from it.
-        # We use the known artifact name "machine.jls" since listartifacts
-        # has a bug in the current MLFlowClient version (missing FileInfo
-        # Dict constructor).
-        artifact_path = replace(run.info.artifact_uri,
-            r"^[a-z\-]+:/*" => "")
-        artifact_data = downloadartifact(logger.service,
-            "$artifact_path/machine.jls")
-
-        tmpfile = tempname() * ".jls"
-        write(tmpfile, artifact_data)
-        loaded_mach = machine(tmpfile)
-        rm(tmpfile)
-
+        loaded_mach = MLJFlow.load(logger, run)
         @test loaded_mach.model isa ProbabilisticPipeline
 
         test_x, test_y = make_moons(1)
