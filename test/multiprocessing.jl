@@ -10,6 +10,11 @@
     r = range(model, :max_depth, lower=1, upper=6)
 
     function test_tuned_model(acceleration_method)
+        experiment = MLJFlow.getorcreateexperiment(logger.service, logger.experiment_name)
+        existing_runs, _ = searchruns(logger.service;
+            experiment_ids=[string(experiment.experiment_id)])
+        n_before = length(existing_runs)
+
         tuned_model = TunedModel(
             model=model,
             range=r,
@@ -20,12 +25,12 @@
         tuned_model_mach = machine(tuned_model, X, y)
         fit!(tuned_model_mach)
 
-        experiment = getorcreateexperiment(logger.service, logger.experiment_name)
-        runs = searchruns(logger.service, experiment)
+        runs, _ = searchruns(logger.service;
+            experiment_ids=[string(experiment.experiment_id)])
 
-        @assert length(runs) == 10
+        @assert length(runs) - n_before == 10
 
-        deleteexperiment(logger.service, experiment)
+        deleteexperiment(logger.service, string(experiment.experiment_id))
     end
 
     @testset "log_evaluation_with_cpu_threads" begin

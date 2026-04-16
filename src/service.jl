@@ -1,5 +1,5 @@
 """
-    logmodelparams(service::MLFlow, run::MLFlowRun, model::Model)
+    logmodelparams(service::MLFlow, run::Run, model::Model)
 
 Extracts the parameters of a model and logs them to the MLFlow server.
 The information coming from `flat_params` is in the form of a NamedTuple, with
@@ -8,13 +8,13 @@ underscores.
 
 # Arguments
 - `service::MLFlow`: An MLFlow service. See [MLFlowClient.jl](https://juliaai.github.io/MLFlowClient.jl/dev/reference/#MLFlowClient.MLFlow)
-- `run::MLFlowRun`: An MLFlow run. See [MLFlowClient.jl](https://juliaai.github.io/MLFlowClient.jl/dev/reference/#MLFlowClient.MLFlowRun)
+- `run::Run`: An MLFlow run. See [MLFlowClient.jl](https://juliaai.github.io/MLFlowClient.jl/dev/reference/#MLFlowClient.Run)
 - `model::Model`: A MLJ model.
 """
-function logmodelparams(service::MLFlow, run::MLFlowRun, model::Model)
+function logmodelparams(service::MLFlow, run::Run, model::Model)
     model_params = flat_params(model)
     for key in keys(model_params)
-        logparam(service, run, key, getproperty(model_params, key))
+        logparam(service, run, string(key), string(getproperty(model_params, key)))
     end
 end
 
@@ -49,7 +49,7 @@ function good_name(measure)
 end
 
 """
-    logmachinemeasures(service::MLFlow, run::MLFlowRun, model::Model)
+    logmachinemeasures(service::MLFlow, run::Run, model::Model)
 
 Extracts the parameters of a model and logs them to the MLFlow server.
 
@@ -58,15 +58,15 @@ Extracts the parameters of a model and logs them to the MLFlow server.
 - `service::MLFlow`: An MLFlow service. See
   [MLFlowClient.jl](https://juliaai.github.io/MLFlowClient.jl/dev/reference/#MLFlowClient.MLFlow)
 
-- `run::MLFlowRun`: An MLFlow run. See
-  [MLFlowClient.jl](https://juliaai.github.io/MLFlowClient.jl/dev/reference/#MLFlowClient.MLFlowRun)
+- `run::Run`: An MLFlow run. See
+  [MLFlowClient.jl](https://juliaai.github.io/MLFlowClient.jl/dev/reference/#MLFlowClient.Run)
 
 - `measures`: A vector of measures.
 
 - `measurements`: A vector of measurements.
 
 """
-function logmachinemeasures(service::MLFlow, run::MLFlowRun, measures,
+function logmachinemeasures(service::MLFlow, run::Run, measures,
     measurements)
     measure_names = measures .|> good_name
     for (name, value) in zip(measure_names, measurements)
@@ -80,3 +80,26 @@ end
 Returns the MLFlow service of a logger.
 """
 service(logger) = logger.service
+
+"""
+    getorcreateexperiment(service, name; artifact_location=missing)
+
+**Private method.**
+
+Gets an experiment by name, creating it if it doesn't exist.
+"""
+function getorcreateexperiment(service::MLFlow, name::String;
+    artifact_location=missing)
+    try
+        id = createexperiment(service, name;
+            artifact_location=artifact_location)
+        return getexperiment(service, id)
+    catch
+        experiment = getexperimentbyname(service, name)
+        if experiment.lifecycle_stage != "active"
+            restoreexperiment(service, string(experiment.experiment_id))
+            experiment = getexperimentbyname(service, name)
+        end
+        return experiment
+    end
+end

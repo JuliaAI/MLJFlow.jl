@@ -8,7 +8,7 @@ on:
     branches:
       - master
       - dev
-    tags: '*'
+    tags: "*"
 jobs:
   test:
     name: Julia ${{ matrix.version }} - ${{ matrix.os }} - ${{ matrix.arch }} - ${{ github.event_name }}
@@ -18,8 +18,8 @@ jobs:
       max-parallel: 1
       matrix:
         version:
-          - 'lts'
-          - '1' # automatically expands to the latest stable 1.x release of Julia.
+          - "lts"
+          - "1" # automatically expands to the latest stable 1.x release of Julia.
         os:
           - ubuntu-latest
         arch:
@@ -30,15 +30,15 @@ jobs:
         if: hashFiles('**/requirements.txt', '**/pyproject.toml') == ''
         run: |
           touch ./requirements.txt
-          echo "mlflow==2.13.0" > ./requirements.txt
-      - uses: actions/setup-python@v6
+          echo "mlflow==3.11.1" > ./requirements.txt
+      - uses: actions/setup-python@v4
         with:
-          python-version: '3.10.13'
-          cache: 'pip'
+          python-version: "3.12.3"
+          cache: "pip"
       - name: Setup mlflow locally
         run: |
           pip install -r ./requirements.txt
-          python3 /opt/hostedtoolcache/Python/3.10.13/x64/bin/mlflow server --host 0.0.0.0 --port 5000 &
+          python3 /opt/hostedtoolcache/Python/3.12.3/x64/bin/mlflow server --host 0.0.0.0 --port 5000 &
           sleep 5
       - uses: julia-actions/setup-julia@v2
         with:
@@ -57,13 +57,11 @@ jobs:
       - uses: julia-actions/julia-buildpkg@v1
       - uses: julia-actions/julia-runtest@v1
         env:
-          JULIA_NUM_THREADS: '2'
+          JULIA_NUM_THREADS: "2"
           MLFLOW_TRACKING_URI: "http://localhost:5000/api"
       - uses: julia-actions/julia-processcoverage@v1
       - uses: codecov/codecov-action@v6
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: false
-          verbose: true 
-          
-
+          verbose: true

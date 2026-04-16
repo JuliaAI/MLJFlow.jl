@@ -8,30 +8,42 @@
 
     pipe = Standardizer() |> DecisionTreeClassifier()
     mach = machine(pipe, X, y)
-    e1 = evaluate!(mach, resampling=CV(),
+    e1 = evaluate!(mach, resampling=CV(nfolds=3),
         measures=[LogLoss(), Accuracy()], verbosity=1, logger=logger)
 
     @testset "log_evaluation" begin
-        experiment = getexperiment(logger.service, logger.experiment_name)
-        runs = searchruns(logger.service, experiment)
-        @test typeof(runs[1]) == MLFlowRun
+        experiment = getexperimentbyname(logger.service, logger.experiment_name)
+        runs, _ = searchruns(logger.service;
+            experiment_ids=[string(experiment.experiment_id)])
+        @test typeof(runs[1]) == Run
     end
 
     @testset "ensuring logging" begin
-        runs = searchruns(logger.service,
-            getexperiment(logger.service, logger.experiment_name))
-        @test issetequal(keys(runs[1].data.params),
+        experiment = getexperimentbyname(logger.service, logger.experiment_name)
+        runs, _ = searchruns(logger.service;
+            experiment_ids=[string(experiment.experiment_id)])
+        @test issetequal([p.key for p in runs[1].data.params],
             String.([keys(MLJModelInterface.flat_params(pipe))...]))
     end
 
     @testset "save" begin
         run = MLJBase.save(logger, mach)
-        @test typeof(run) == MLFlowRun
+        @test typeof(run) == Run
 
-        artifacts = listartifacts(logger.service, run)
-        @test artifacts |> length == 1
+        # Download the artifact and load the machine from it.
+        # We use the known artifact name "machine.jls" since listartifacts
+        # has a bug in the current MLFlowClient version (missing FileInfo
+        # Dict constructor).
+        artifact_path = replace(run.info.artifact_uri,
+            r"^[a-z\-]+:/*" => "")
+        artifact_data = downloadartifact(logger.service,
+            "$artifact_path/machine.jls")
 
-        loaded_mach = machine(artifacts[1].filepath)
+        tmpfile = tempname() * ".jls"
+        write(tmpfile, artifact_data)
+        loaded_mach = machine(tmpfile)
+        rm(tmpfile)
+
         @test loaded_mach.model isa ProbabilisticPipeline
 
         test_x, test_y = make_moons(1)
@@ -50,11 +62,12 @@
 
         e1 = evaluate!(zeroparams_machine, resampling=CV(),
             measures=[LogLoss(), Accuracy()], verbosity=1, logger=logger)
-        runs = searchruns(logger.service,
-            getexperiment(logger.service, logger.experiment_name))
-        @test isempty(runs[3].data.params)
+        experiment = getexperimentbyname(logger.service, logger.experiment_name)
+        runs, _ = searchruns(logger.service;
+            experiment_ids=[string(experiment.experiment_id)])
+        @test any(r -> isempty(r.data.params), runs)
     end
 
-    experiment = getorcreateexperiment(logger.service, logger.experiment_name)
-    deleteexperiment(logger.service, experiment)
+    experiment = MLJFlow.getorcreateexperiment(logger.service, logger.experiment_name)
+    deleteexperiment(logger.service, string(experiment.experiment_id))
 end

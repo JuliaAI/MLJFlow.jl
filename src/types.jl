@@ -82,8 +82,13 @@ function open_logging_channel(logger::Logger)
     #
     # Its usage can be seen in the `log_evaluation` function in `base.jl`.
     Threads.@spawn for (logging_function, logger, performance_evaluation, result_channel) in logger.logging_channel
-        result = logging_function(logger, performance_evaluation)
-        put!(result_channel, result)
-        Base.close(result_channel)
+        try
+            result = logging_function(logger, performance_evaluation)
+            put!(result_channel, result)
+        catch e
+            put!(result_channel, CapturedException(e, catch_backtrace()))
+        finally
+            Base.close(result_channel)
+        end
     end
 end
