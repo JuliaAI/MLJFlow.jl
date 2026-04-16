@@ -14,7 +14,7 @@ underscores.
 function logmodelparams(service::MLFlow, run::Run, model::Model)
     model_params = flat_params(model)
     for key in keys(model_params)
-        logparam(service, run, key, getproperty(model_params, key))
+        logparam(service, run, string(key), string(getproperty(model_params, key)))
     end
 end
 
@@ -80,3 +80,26 @@ end
 Returns the MLFlow service of a logger.
 """
 service(logger) = logger.service
+
+"""
+    getorcreateexperiment(service, name; artifact_location=missing)
+
+**Private method.**
+
+Gets an experiment by name, creating it if it doesn't exist.
+"""
+function getorcreateexperiment(service::MLFlow, name::String;
+    artifact_location=missing)
+    try
+        id = createexperiment(service, name;
+            artifact_location=artifact_location)
+        return getexperiment(service, id)
+    catch
+        experiment = getexperimentbyname(service, name)
+        if experiment.lifecycle_stage != "active"
+            restoreexperiment(service, string(experiment.experiment_id))
+            experiment = getexperimentbyname(service, name)
+        end
+        return experiment
+    end
+end

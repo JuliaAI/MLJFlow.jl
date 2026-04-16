@@ -3,7 +3,9 @@ module MLJFlow
 using MLJBase: Model, Machine, name
 using MLJModelInterface: flat_params
 using MLFlowClient: MLFlow, logparam, logmetric, createrun, Run,
-    updaterun, uploadartifact, getexperiment, createexperiment
+    updaterun, uploadartifact, downloadartifact, getexperiment,
+    getexperimentbyname, createexperiment, restoreexperiment,
+    RunStatus, Tag
 
 import Base: show
 import MLJBase: save, log_evaluation
