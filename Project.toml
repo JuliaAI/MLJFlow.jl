@@ -1,6 +1,6 @@
 name = "MLJFlow"
 uuid = "7b7b8358-b45c-48ea-a8ef-7ca328ad328f"
-version = "0.6.0"
+version = "0.6.1"
 authors = ["Jose Esparza <joseesparzadc@gmail.com>"]
 
 [deps]
