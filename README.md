@@ -11,15 +11,12 @@
 
 [MLJ](https://github.com/alan-turing-institute/MLJ.jl) is a Julia framework for
 combining and tuning machine learning models. MLJFlow is a package that extends
-the MLJ capabilities to use [MLflow](https://mlflow.org/) as a backend for
-model tracking and experiment management. To be specific, MLJFlow provides a
-close to zero-preparation to use MLflow with MLJ; by the usage of function
-extensions that automate the MLflow cycle (create experiment, create run, log
-metrics, log parameters, log artifacts, etc.).
+the MLJ capabilities to use [mlflow](https://mlflow.org/) as a backend for
+model tracking and experiment management.
 
 ## Background
 
-This project is part of the GSoC 2023 program. The proposal description can be
+This project was launched as part of the GSoC 2023 program. The proposal description can be
 found [here](https://summerofcode.withgoogle.com/programs/2023/projects/iRxuzeGJ).
 The entire workload is divided into three different repositories:
 [MLJ.jl](https://github.com/alan-turing-institute/MLJ.jl),
@@ -27,24 +24,25 @@ The entire workload is divided into three different repositories:
 
 ## Features
 
-- [x] MLflow cycle automation (create experiment, create run, log metrics, log parameters,
+- [x] [mlflow](https://mlflow.org) cycle automation (create experiment, create run, log metrics, log parameters,
       log artifacts, etc.)
 
-- [x] Provides a wrapper `Logger` for MLFlowClient.jl clients and associated
-      metadata; instances of this type are valid "loggers", which can be passed to MLJ
-      functions supporting the `logger` keyword argument.
+- [x] Provides a wrapper `Logger` for MLFlowClient.jl clients and associated metadata;
+      instances of this type are valid "loggers", which can be passed to MLJ functions
+      supporting the `logger` keyword argument.
 
-- [x] Provides MLflow integration with MLJ's `evaluate!`/`evaluate` method (model
-      **performance evaluation**)
+- [x] Provides [mlflow](https://mlflow.org) integration with MLJ's `evaluate!`/`evaluate`
+      method (model **performance evaluation**)
 
-- [x] Extends MLJ's `MLJ.save` method, to save trained machines as retrievable MLflow
-      client artifacts
+- [x] Extends MLJ's `MLJ.save` method, to save trained machines as retrievable
+      [mlflow](https://mlflow.org) client artifacts
 
-- [x] Provides MLflow integration with MLJ's `TunedModel` wrapper (to log **hyper-parameter
-      tuning** workflows)
+- [x] Provides [mlflow](https://mlflow.org) integration with MLJ's `TunedModel` wrapper
+      (to log **hyper-parameter tuning** workflows)
 
-- [ ] Provides MLflow integration with MLJ's `IteratedModel` wrapper (to log **controlled
-      iteration** of tree gradient boosters, neural networks, and other iterative models)
+- [ ] Provides [mlflow](https://mlflow.org) integration with MLJ's `IteratedModel` wrapper
+      (to log **controlled iteration** of tree gradient boosters, neural networks, and
+      other iterative models)
 
 - [x] Plays well with **composite models** (pipelines, stacks, etc.)
 
@@ -53,32 +51,42 @@ The entire workload is divided into three different repositories:
 
 ### Logging a model performance evaluation
 
-The example below assumes the user is familiar with basic MLflow concepts. We suppose an
-MLflow API service is running on a local server, with address "http://127.0.0.1:5000". (In a
-shell/console, run `mlflow server` to launch an mlflow service on a local server.)
+The example below assumes the user is familiar with basic [mlflow](https://mlflow.org)
+concepts. We suppose an [mlflow](https://mlflow.org) API service is running on a local
+server, with address "http://127.0.0.1:5000"; your actual URI may differ.  In a
+shell/console, you run `mlflow server` to launch an [mlflow](https://mlflow.org) service
+on a local server.
 
-Refer to the [MLflow documentation](https://www.mlflow.org/docs/latest/index.html) for
-necessary background.
+**Security issues**. Recent versions of [mlflow](https://mlflow.org) require you to
+configure security to allow you to navigate to the service in your browser. Otherwise you
+will encounter a 403 Error.  Alternatively, you can, at your own risk, use the unsafe
+nuclear option `mlflow server --disable-security-middleware`.
+
+Refer to the [mlflow](https://mlflow.org) documentation for necessary background.
 
 **Important.** For the examples that follow, we assume `MLJ`, `MLJDecisionTreeClassifier`
-and `MLFlowClient` are in the user's active Julia package environment.
+and `MLFlowClient` are in the user's active Julia package environment. Previous versions
+of MLJ included MLJFlow as a dependency; since MLJ 0.23, you must explicitly import
+MLJFlow:
 
 ```julia
-using MLJ # Requires MLJ.jl version 0.19.3 or higher
+    using MLJ # Requires MLJ.jl version 0.23 or higher
+	using MLJFlow
 ```
 
-We first define a logger, providing the API address of our running MLflow
-instance. The experiment name and artifact location are optional.
+We begin by defining a logger, providing the API address of our running [mlflow](https://mlflow.org) instance
+(possibly different from the one below). The experiment name and artifact
+location are optional.
 
 ```julia
 logger = MLJFlow.Logger(
-    "http://127.0.0.1:5000/api";
-    experiment_name="test",
+    "http://127.0.0.1:5000";
+    experiment_name="MLJFlow test",
     artifact_location="./mlj-test"
 )
 ```
 
-Next, grab some synthetic data and choose an MLJ model:
+Next, we grab some synthetic data and choose an MLJ model:
 
 ```julia
 X, y = make_moons(100) # a table and a vector with 100 rows
@@ -99,9 +107,11 @@ evaluate(
 )
 ```
 
-Navigate to "http://127.0.0.1:5000" on your browser and select the "Experiment" matching
-the name above ("MLJFlow test"). Select the single run displayed to see the logged results
-of the performance evaluation.
+Navigate to "http://127.0.0.1:5000" on your browser and select the "Experiment Name"
+matching the name above ("MLJFlow test"). See "Security issues" above if you get a 403
+error. We are interested in "Evaluation runs", which we can navigate to in mljflow v3.11
+by selecting "Evaluation runs" in the left sidebar. Select the single run displayed to see
+the logged results of the performance evaluation.
 
 
 ### Logging outcomes of model tuning
@@ -126,9 +136,9 @@ Return to the browser page (refreshing if necessary) and you will find five more
 performance evaluations logged, one for each value of `max_depth` evaluated in tuning.
 
 
-### Saving and retrieving trained machines as MLflow artifacts
+### Saving and retrieving trained machines as [mlflow](https://mlflow.org) artifacts
 
-Let's train the model on all data and save the trained machine as an MLflow artifact:
+Let's train the model on all data and save the trained machine as an [mlflow](https://mlflow.org) artifact:
 
 ```julia
 mach = machine(model, X, y) |> fit!
