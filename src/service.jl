@@ -90,16 +90,21 @@ Gets an experiment by name, creating it if it doesn't exist.
 """
 function getorcreateexperiment(service::MLFlow, name::String;
     artifact_location=missing)
-    try
+    experiment = with_logger(NullLogger()) do
+        try
+            getexperimentbyname(service, name)
+        catch
+            nothing
+        end
+    end
+    if experiment === nothing
         id = createexperiment(service, name;
             artifact_location=artifact_location)
         return getexperiment(service, id)
-    catch
-        experiment = getexperimentbyname(service, name)
-        if experiment.lifecycle_stage != "active"
-            restoreexperiment(service, string(experiment.experiment_id))
-            experiment = getexperimentbyname(service, name)
-        end
-        return experiment
     end
+    if experiment.lifecycle_stage != "active"
+        restoreexperiment(service, string(experiment.experiment_id))
+        experiment = getexperimentbyname(service, name)
+    end
+    return experiment
 end

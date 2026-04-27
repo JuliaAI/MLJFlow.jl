@@ -1,5 +1,6 @@
 module MLJFlow
 
+using Logging: with_logger, NullLogger
 using MLJBase: Model, Machine, machine, name
 using MLJModelInterface: flat_params
 using MLFlowClient: MLFlow, logparam, logmetric, createrun, Run,
