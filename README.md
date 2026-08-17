@@ -40,7 +40,7 @@ The entire workload is divided into three different repositories:
 - [x] Provides [mlflow](https://mlflow.org) integration with MLJ's `TunedModel` wrapper
       (to log **hyper-parameter tuning** workflows)
 
-- [ ] Provides [mlflow](https://mlflow.org) integration with MLJ's `IteratedModel` wrapper
+- [x] Provides [mlflow](https://mlflow.org) integration with MLJ's `IteratedModel` wrapper
       (to log **controlled iteration** of tree gradient boosters, neural networks, and
       other iterative models)
 
